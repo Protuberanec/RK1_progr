@@ -3,102 +3,80 @@
 #include <QList>
 
 
-QByteArray fileData;
+struct StudentInfo {
+    char* name;
+    char* surname;
+    int age;
+    char* numTicket;
+};
 
-void ReadFromFile(const char* fileName) {
-    QFile f(fileName);
-    f.open(QIODevice::ReadOnly);
+struct SubjMark {
+    char* subj;
+    int id_subj;
+    QVector<int> marks_list;
+    float averMark;
 
-    fileData = f.readAll();
+//homework fill constructors
+    SubjMark() {
 
-    f.close();
-}
+    }
+    SubjMark(const char* _subj) {
 
-void WriteToFile(const int* ar, int size) {
-
-}
-
-void task1() {
-    ReadFromFile("test");
-
-    int ar[256];
-    memset(&ar[0], 0x00, sizeof(int) * 256);
-
-    for (int i = 0; i < fileData.size(); i++) {
-        ar[fileData[i]]++;
     }
 
-    WriteToFile(&ar[0], 256);
-}
+    SubjMark(const char* _subj, int _idSubj) {
 
-
-char binNumb[32];
-void perevod(int numDecimal) {
-    memset(binNumb, 0x00, 32 * sizeof(int));
-
-    for (int i = 0; i < 32; i++) {
-        binNumb[i] = ((numDecimal & 1 << i)) ? 0x31 : 0x30;
-//        binNumb[i] = ((numDecimal & (1 << i)) >> i) + 0x30;
-    }
-}
-
-void task2() {
-    perevod(39);
-    qDebug() << binNumb;
-
-    perevod(1);
-    qDebug() << binNumb;
-
-    perevod(0xFFFFFFFF);
-    qDebug() << binNumb;
-}
-
-void tempT() {
-
-    for (int i = 0; i < 256; i++) {
-        qDebug() << (int)i << "\t" << (char)i;
     }
 
-}
+    ~SubjMark() {
+        if (subj != nullptr) {
+            delete [] subj;
+        }
+    }
+
+};
 
 
-//std::list<float> getAverStr(int* ar, int N, int M) {
-
-//}
-
-QList<float> getAverStr(int* ar, int N, int M) {
-    QList<float> averStr;
-
-    for (int i = 0; i < N; i++) {
-        float averStr_temp = 0;
-        for (int j = 0; j < M; j++) {
-            averStr_temp += ar[i*N + j] / (float)M;
+class Student {
+private :
+    StudentInfo* info;
+    QList<SubjMark*> listSubjMark;
+//howework вернуть итератор!!!
+    int lookForSub(const char* subjName) {
+//        for (auto iter = listSubjMark.begin(); iter != listSubjMark.end(); iter++) {}
+        for (int i = 0; i < listSubjMark.size(); i++) {
+            //homework реализоавть функцию strcmp(....)
+            if (strcmp(listSubjMark[i]->subj, subjName) == 0) {
+                return i;
+            }
         }
 
-        averStr.push_back(averStr_temp);
-        averStr.append(averStr_temp);
+        listSubjMark.push_back(new SubjMark(subjName));
+        return listSubjMark.size() - 1;
     }
 
+public :
 
-    return averStr;
-}
+    void addSubject(const char* subjName, int idSubj = 0) {
+        listSubjMark.push_back(new SubjMark(subjName, idSubj));
+    }
 
-void task5() {
+    int addMarkToSubj(const char* subjName /*int _idSubj*/, int mark) {
+        int numSubj = lookForSub(subjName);
 
-}
+        listSubjMark[numSubj]->marks_list.push_back(mark);
 
+        return 0;
+
+
+    }
+
+};
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    char temp[100][100];
-    tempF(&temp[0][0]);
-
-//    task1();
-    task2();
-
-    tempT();
 
 
 
